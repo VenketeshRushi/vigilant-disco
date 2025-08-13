@@ -1,9 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
-import Cookies from "js-cookie";
+import { getAuthCookies } from "@/utils/ext";
 
 const PublicRoute = () => {
-	const token = Cookies.get("token");
-	return token ? <Navigate to="/dashboard" replace /> : <Outlet />;
+	const { token, refreshToken, role } = getAuthCookies();
+
+	return token && refreshToken && role ? (
+		<Navigate to="/dashboard" replace />
+	) : (
+		<Outlet />
+	);
 };
 
 export default PublicRoute;

@@ -1,10 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
-import Cookies from "js-cookie";
+import { getAuthCookies } from "@/utils/ext";
 
 const PrivateRoute = () => {
-	const token = Cookies.get("token");
-	const userRole = Cookies.get("role");
-	return token && userRole ? <Outlet /> : <Navigate to="/login" replace />;
+	const { token, refreshToken, role } = getAuthCookies();
+
+	return token && refreshToken && role ? (
+		<Outlet />
+	) : (
+		<Navigate to="/login" replace />
+	);
 };
 
 export default PrivateRoute;

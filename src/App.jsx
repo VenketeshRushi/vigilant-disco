@@ -1,21 +1,22 @@
 import React, { Suspense } from "react";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import PublicPageLayout from "@/layouts/PublicPageLayout";
 import PublicRoute from "@/routes/PublicRoute";
 import PrivateRoute from "@/routes/PrivateRoute";
 import RoleGuard from "@/routes/RoleGuard";
 import NotFound from "@/components/NotFound";
 import Loader from "@/components/Loader";
+import RootLayout from "@/layouts/RootLayout";
 
 const Home = React.lazy(() => import("@/pages/Home"));
 const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
 const AdminDashboard = React.lazy(() => import("@/pages/AdminDashboard"));
 const Login = React.lazy(() => import("@/pages/Login"));
+const Signup = React.lazy(() => import("@/pages/Signup"));
 
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <PublicPageLayout />,
+		element: <RootLayout />,
 		children: [
 			// ******** Public routes – only for users who are not logged in
 			{
@@ -39,6 +40,19 @@ const router = createBrowserRouter([
 						element: (
 							<Suspense fallback={<Loader />}>
 								<Login />
+							</Suspense>
+						),
+					},
+				],
+			},
+			{
+				element: <PublicRoute />,
+				children: [
+					{
+						path: "signup",
+						element: (
+							<Suspense fallback={<Loader />}>
+								<Signup />
 							</Suspense>
 						),
 					},

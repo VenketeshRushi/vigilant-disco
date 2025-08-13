@@ -1,19 +1,19 @@
 import { Navigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { getAuthCookies, removeAuthCookies } from "@/utils/ext";
 
 const RoleGuard = ({ role, children }) => {
 	console.log("RoleGuard: Checking access for role:", role);
 
-	const token = Cookies.get("token");
-	const userRole = Cookies.get("role");
+	const { token, refreshToken, role: userRole } = getAuthCookies();
 
 	console.log("RoleGuard: Token exists:", !!token);
 	console.log("RoleGuard: Role from cookie:", userRole);
 
-	if (!token) {
-		console.log("RoleGuard: No token found, redirecting to login");
-		Cookies.remove("token");
-		Cookies.remove("role");
+	if (!token || !refreshToken) {
+		console.log(
+			"RoleGuard: No valid token or refresh token found, redirecting to login"
+		);
+		removeAuthCookies();
 		return <Navigate to="/login" replace />;
 	}
 
@@ -23,8 +23,9 @@ const RoleGuard = ({ role, children }) => {
 		);
 		return children;
 	} else {
-		console.log("RoleGuard: Role mismatch. Expected:", role, "Got:", userRole);
-		console.log("RoleGuard: Redirecting to dashboard");
+		console.log(
+			`RoleGuard: Role mismatch. Expected: ${role}, Got: ${userRole}`
+		);
 		return <Navigate to="/dashboard" replace />;
 	}
 };
